@@ -20,7 +20,15 @@ import {spawn} from 'child_process';
 
 const filename = process.argv[2];
 if (!filename) {
-  throw Error('A file to watch must be specified!');
+  console.log('A file to watch must be specified!');
+  // Una posible solución sería crear el fichero y continuar con el programa.
+  fs.writeFile(`${filename}`, ' ', (err) => {
+    if (err) {
+      console.log('Ocurrió un error en la creación del fichero.');
+      throw err;
+    } 
+    console.log('Fichero creado correctamente.');
+  });
 }
 
 
