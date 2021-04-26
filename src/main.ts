@@ -19,18 +19,15 @@
 
 import * as fs from 'fs';
 import {spawn} from 'child_process';
+import {constants} from 'node:buffer';
 
 
 const filename = process.argv[2];
 if (!filename) {
   console.log('A file to watch must be specified!');
-  // Una posible solución sería crear el fichero y continuar con el programa.
-  fs.writeFile(`${filename}`, 'algo', (err) => {
-    if (err) {
-      console.log('Ocurrió un error en la creación del fichero.');
-    } else {
-      console.log('Fichero creado correctamente.');
-    }
+  // intentando hacer funcionar fs.access()
+  fs.access(`${filename}`, constants.MAX_LENGTH, (err) => {
+    console.log(`${filename} ${err ? 'does not exist' : 'exists'}`);
   });
 }
 
@@ -57,10 +54,15 @@ const valor = fs.watch(filename, (eventType, err) => {
 
 
   ls.on('close', () => {
-    const parts = output.split(/​​\s​​+/);
+    const parts = output.split(/\s+/);
     console.log([parts[0], parts[4], parts[8]]);
   });
+
+  ls.on('exit', () => {
+    console.log('exit');
+  });
 });
+
 
 // Control del valor de retorno de fs.watch().
 // Este valor del objeto fs.FSWatcher es lo que se comprueba.
