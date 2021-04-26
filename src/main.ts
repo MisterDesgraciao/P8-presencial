@@ -1,3 +1,6 @@
+/* eslint-disable no-irregular-whitespace */
+/* eslint-disable no-trailing-spaces */
+/* eslint-disable max-len */
 /**
  * Desarrolle los siguientes ejercicios en un proyecto alojado en un nuevo repositorio de GitHub:
 
@@ -25,11 +28,12 @@ if (!filename) {
   fs.writeFile(`${filename}`, 'algo', (err) => {
     if (err) {
       console.log('Ocurrió un error en la creación del fichero.');
-      throw err;
-    } 
-    console.log('Fichero creado correctamente.');
+    } else {
+      console.log('Fichero creado correctamente.');
+    }
   });
 }
+
 
 // fs.watch() devuelve un objeto fs.FSWatcher que tiene la función close() para cerrarlo.
 const valor = fs.watch(filename, (eventType, err) => {
@@ -37,9 +41,15 @@ const valor = fs.watch(filename, (eventType, err) => {
 
   // controlamos el tipo de evento que se produce.
   console.log(`Event Type: ${eventType}`);
-  if (eventType === 'rename') {
-    console.log('El fichero se ha movido/borrado. Terminando ejecución.');
-    valor.close();
+  switch (eventType) {
+    case 'rename':
+      console.log('Se ha movido/borrado/cambiado el nombre del fichero.');
+      valor.close();
+      break;
+    case 'change':
+      console.log('Se ha modificado el contenido del fichero.');
+    default:
+      break;
   }
 
   let output = '';
@@ -52,6 +62,16 @@ const valor = fs.watch(filename, (eventType, err) => {
   });
 });
 
+// Control del valor de retorno de fs.watch().
+// Este valor del objeto fs.FSWatcher es lo que se comprueba.
+valor.on('error', () => {
+  console.log('Ocurrió un error.');
+});
+
 valor.on('close', () => {
   console.log('Terminamos la ejecución.');
+});
+
+valor.on('change', () => {
+  console.log('Se ha producido un cambio.');
 });
